@@ -36,7 +36,7 @@
         <div>
           <span class="eyebrow">Dashboard</span>
           <h1>FixFlow Admin</h1>
-          <p>Track requests, update lead status, export data, and monitor website visits.</p>
+          <p>Manage website requests, lead status, exports, and recent website visit activity.</p>
         </div>
         <div class="admin-actions">
           <a class="btn btn-secondary" href="index.html">View Site</a>
@@ -54,16 +54,34 @@
           <strong id="new-lead-count">0</strong>
         </article>
         <article>
+          <span>Contacted</span>
+          <strong id="contacted-lead-count">0</strong>
+        </article>
+        <article>
           <span>In progress</span>
           <strong id="progress-lead-count">0</strong>
+        </article>
+        <article>
+          <span>Completed</span>
+          <strong id="completed-lead-count">0</strong>
         </article>
         <article>
           <span>Visits today</span>
           <strong id="today-visit-count">0</strong>
         </article>
+        <article>
+          <span>Total visits</span>
+          <strong id="total-visit-count">0</strong>
+        </article>
       </div>
 
       <section class="admin-controls">
+        <div class="admin-control-heading">
+          <div>
+            <h2>Lead Controls</h2>
+            <p id="admin-last-updated">Load the latest requests and export clean reports.</p>
+          </div>
+        </div>
         <label>
           Search leads
           <input type="search" id="lead-search" placeholder="Name, business, email, WhatsApp...">
@@ -86,7 +104,8 @@
           </select>
         </label>
         <button class="btn btn-secondary" id="refresh-leads" type="button">Refresh</button>
-        <button class="btn btn-primary" id="export-leads" type="button">Export CSV</button>
+        <button class="btn btn-primary" id="export-leads-excel" type="button">Export Excel</button>
+        <button class="btn btn-secondary" id="export-leads-csv" type="button">CSV</button>
       </section>
 
       <div class="admin-layout">

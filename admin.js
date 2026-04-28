@@ -5,7 +5,8 @@ const loginStatus = document.querySelector("#admin-login-status");
 const logoutButton = document.querySelector("#admin-logout");
 const refreshLeadsButton = document.querySelector("#refresh-leads");
 const refreshVisitsButton = document.querySelector("#refresh-visits");
-const exportLeadsButton = document.querySelector("#export-leads");
+const exportLeadsCsvButton = document.querySelector("#export-leads-csv");
+const exportLeadsExcelButton = document.querySelector("#export-leads-excel");
 const leadSearch = document.querySelector("#lead-search");
 const leadStatusFilter = document.querySelector("#lead-status-filter");
 const leadTypeFilter = document.querySelector("#lead-type-filter");
@@ -13,19 +14,24 @@ const leadsTable = document.querySelector("#leads-table");
 const visitsTable = document.querySelector("#visits-table");
 const leadCount = document.querySelector("#lead-count");
 const newLeadCount = document.querySelector("#new-lead-count");
+const contactedLeadCount = document.querySelector("#contacted-lead-count");
 const progressLeadCount = document.querySelector("#progress-lead-count");
+const completedLeadCount = document.querySelector("#completed-lead-count");
 const todayVisitCount = document.querySelector("#today-visit-count");
+const totalVisitCount = document.querySelector("#total-visit-count");
 const leadTableSummary = document.querySelector("#lead-table-summary");
 const visitSummary = document.querySelector("#visit-summary");
 const visitInsights = document.querySelector("#visit-insights");
 const detailTitle = document.querySelector("#detail-title");
 const detailSubtitle = document.querySelector("#detail-subtitle");
 const leadDetailList = document.querySelector("#lead-detail-list");
+const adminLastUpdated = document.querySelector("#admin-last-updated");
 
 const STATUSES = ["new", "contacted", "in_progress", "completed", "closed"];
 let leadsData = [];
 let visitsData = [];
 let filteredLeads = [];
+let selectedLeadId = null;
 
 function setAdminStatus(message, type = "") {
   if (!loginStatus) return;
@@ -41,12 +47,16 @@ function formatDate(value) {
   }).format(new Date(value));
 }
 
+function formatDateForFile(value) {
+  return new Date(value).toISOString().slice(0, 10);
+}
+
 function formatStatus(value) {
   return safeText(value).replaceAll("_", " ");
 }
 
 function safeText(value) {
-  return value ? String(value) : "-";
+  return value === null || value === undefined || value === "" ? "-" : String(value);
 }
 
 function escapeHtml(value) {
@@ -79,10 +89,13 @@ function isToday(value) {
 }
 
 function updateStats() {
-  leadCount.textContent = leadsData.length;
-  newLeadCount.textContent = leadsData.filter((lead) => lead.status === "new").length;
-  progressLeadCount.textContent = leadsData.filter((lead) => lead.status === "in_progress").length;
-  todayVisitCount.textContent = visitsData.filter((visit) => isToday(visit.created_at)).length;
+  if (leadCount) leadCount.textContent = leadsData.length;
+  if (newLeadCount) newLeadCount.textContent = leadsData.filter((lead) => lead.status === "new").length;
+  if (contactedLeadCount) contactedLeadCount.textContent = leadsData.filter((lead) => lead.status === "contacted").length;
+  if (progressLeadCount) progressLeadCount.textContent = leadsData.filter((lead) => lead.status === "in_progress").length;
+  if (completedLeadCount) completedLeadCount.textContent = leadsData.filter((lead) => lead.status === "completed").length;
+  if (todayVisitCount) todayVisitCount.textContent = visitsData.filter((visit) => isToday(visit.created_at)).length;
+  if (totalVisitCount) totalVisitCount.textContent = visitsData.length;
 }
 
 function updateTypeFilter() {
@@ -141,12 +154,12 @@ function renderLeads() {
     .map(
       (lead) => `
         <tr>
-          <td>${formatDate(lead.created_at)}</td>
-          <td>
+          <td class="date-cell">${formatDate(lead.created_at)}</td>
+          <td class="lead-cell">
             <strong>${escapeHtml(lead.full_name)}</strong>
             <span>${escapeHtml(lead.business_name)}</span>
           </td>
-          <td>
+          <td class="contact-cell">
             <a href="mailto:${escapeHtml(lead.email)}">${escapeHtml(lead.email)}</a>
             <span>${escapeHtml(lead.whatsapp)}</span>
           </td>
@@ -170,8 +183,9 @@ function renderLeadDetail(leadId) {
   const lead = leadsData.find((item) => item.id === leadId);
   if (!lead) return;
 
+  selectedLeadId = leadId;
   detailTitle.textContent = lead.business_name || lead.full_name || "Website request";
-  detailSubtitle.textContent = `${safeText(lead.full_name)} • ${formatStatus(lead.status)}`;
+  detailSubtitle.textContent = `${safeText(lead.full_name)} - ${formatStatus(lead.status)}`;
   leadDetailList.innerHTML = `
     <div><dt>Date</dt><dd>${formatDate(lead.created_at)}</dd></div>
     <div><dt>Name</dt><dd>${escapeHtml(lead.full_name)}</dd></div>
@@ -216,6 +230,8 @@ async function loadLeads() {
   updateTypeFilter();
   updateStats();
   applyLeadFilters();
+  if (selectedLeadId) renderLeadDetail(selectedLeadId);
+  if (adminLastUpdated) adminLastUpdated.textContent = `Leads updated ${formatDate(new Date())}`;
 }
 
 function renderVisitInsights() {
@@ -297,11 +313,85 @@ function exportLeadsCsv() {
     .map((row) => row.map((cell) => `"${String(cell).replaceAll('"', '""')}"`).join(","))
     .join("\n");
 
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const blob = new Blob([`\uFEFF${csv}`], { type: "text/csv;charset=utf-8" });
+  downloadBlob(blob, `fixflow-leads-${formatDateForFile(new Date())}.csv`);
+}
+
+function exportLeadsExcel() {
+  const generatedAt = formatDate(new Date());
+  const rows = filteredLeads.map(
+    (lead) => `
+      <tr>
+        <td>${escapeHtml(formatDate(lead.created_at))}</td>
+        <td>${escapeHtml(lead.full_name)}</td>
+        <td>${escapeHtml(lead.business_name)}</td>
+        <td>${escapeHtml(lead.email)}</td>
+        <td>${escapeHtml(lead.whatsapp)}</td>
+        <td>${escapeHtml(lead.website_type)}</td>
+        <td>${escapeHtml(lead.current_website)}</td>
+        <td>${escapeHtml(formatStatus(lead.status))}</td>
+        <td>${escapeHtml(lead.message)}</td>
+      </tr>
+    `
+  );
+
+  const workbook = `
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Arial, sans-serif; color: #111827; }
+          h1 { margin: 0 0 6px; font-size: 22px; }
+          p { margin: 0 0 18px; color: #4b5563; }
+          table { border-collapse: collapse; width: 100%; }
+          th { background: #050608; color: #ffffff; font-weight: 700; text-align: left; }
+          th, td { border: 1px solid #d9dde4; padding: 10px 12px; vertical-align: top; }
+          tr:nth-child(even) td { background: #f3f4f6; }
+          td { mso-number-format: "\\@"; }
+          .summary td { background: #eef0f3; font-weight: 700; }
+        </style>
+      </head>
+      <body>
+        <h1>FixFlow Leads Report</h1>
+        <p>Generated ${escapeHtml(generatedAt)}. Showing ${filteredLeads.length} of ${leadsData.length} requests.</p>
+        <table>
+          <tr class="summary">
+            <td>Total requests</td>
+            <td>${leadsData.length}</td>
+            <td>Filtered requests</td>
+            <td>${filteredLeads.length}</td>
+            <td>New leads</td>
+            <td>${leadsData.filter((lead) => lead.status === "new").length}</td>
+            <td>In progress</td>
+            <td>${leadsData.filter((lead) => lead.status === "in_progress").length}</td>
+            <td></td>
+          </tr>
+          <tr>
+            <th>Date</th>
+            <th>Name</th>
+            <th>Business</th>
+            <th>Email</th>
+            <th>WhatsApp</th>
+            <th>Website Type</th>
+            <th>Current Website</th>
+            <th>Status</th>
+            <th>Message</th>
+          </tr>
+          ${rows.join("") || '<tr><td colspan="9">No requests to export.</td></tr>'}
+        </table>
+      </body>
+    </html>
+  `;
+
+  const blob = new Blob([workbook], { type: "application/vnd.ms-excel;charset=utf-8" });
+  downloadBlob(blob, `fixflow-leads-${formatDateForFile(new Date())}.xls`);
+}
+
+function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = `fixflow-leads-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.download = filename;
   link.click();
   URL.revokeObjectURL(url);
 }
@@ -360,7 +450,8 @@ if (logoutButton) {
 
 if (refreshLeadsButton) refreshLeadsButton.addEventListener("click", loadLeads);
 if (refreshVisitsButton) refreshVisitsButton.addEventListener("click", loadVisits);
-if (exportLeadsButton) exportLeadsButton.addEventListener("click", exportLeadsCsv);
+if (exportLeadsCsvButton) exportLeadsCsvButton.addEventListener("click", exportLeadsCsv);
+if (exportLeadsExcelButton) exportLeadsExcelButton.addEventListener("click", exportLeadsExcel);
 if (leadSearch) leadSearch.addEventListener("input", applyLeadFilters);
 if (leadStatusFilter) leadStatusFilter.addEventListener("change", applyLeadFilters);
 if (leadTypeFilter) leadTypeFilter.addEventListener("change", applyLeadFilters);
