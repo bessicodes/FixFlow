@@ -20,6 +20,9 @@ create table if not exists public.leads (
   status text not null default 'new'
 );
 
+alter table public.leads
+add column if not exists status text not null default 'new';
+
 create table if not exists public.page_visits (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
@@ -55,6 +58,26 @@ on public.leads
 for select
 to authenticated
 using (
+  exists (
+    select 1
+    from public.admins
+    where admins.email = auth.jwt() ->> 'email'
+  )
+);
+
+drop policy if exists "Admins can update FixFlow leads" on public.leads;
+create policy "Admins can update FixFlow leads"
+on public.leads
+for update
+to authenticated
+using (
+  exists (
+    select 1
+    from public.admins
+    where admins.email = auth.jwt() ->> 'email'
+  )
+)
+with check (
   exists (
     select 1
     from public.admins
