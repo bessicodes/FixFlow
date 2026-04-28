@@ -1363,6 +1363,10 @@ h3 {
 }
 
 @media (max-width: 940px) {
+  .site-header {
+    background: rgba(255, 255, 255, 0.94);
+  }
+
   .nav-toggle {
     display: block;
   }
@@ -1373,8 +1377,8 @@ h3 {
     right: 24px;
     left: 24px;
     display: grid;
-    gap: 0;
-    padding: 10px;
+    gap: 6px;
+    padding: 12px;
     border-radius: var(--radius);
     background: rgba(255, 255, 255, 0.96);
     box-shadow: var(--shadow);
@@ -1391,8 +1395,17 @@ h3 {
   }
 
   .nav-menu a {
-    padding: 14px;
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 16px;
     border-radius: var(--radius);
+  }
+
+  .nav-menu a:hover,
+  .nav-menu a.active {
+    background: var(--black);
+    color: var(--white);
   }
 
   .card-grid,
@@ -1432,40 +1445,64 @@ h3 {
   .navbar,
   .section-shell,
   .footer-inner {
-    width: min(100% - 28px, 1180px);
+    width: min(100% - 32px, 1180px);
   }
 
   .brand,
   .footer-brand {
-    width: 142px;
-    height: 46px;
+    width: 136px;
+    height: 44px;
   }
 
   .navbar {
-    min-height: 74px;
+    min-height: 72px;
   }
 
   .nav-menu {
     top: 74px;
-    right: 14px;
-    left: 14px;
+    right: 16px;
+    left: 16px;
+    max-height: calc(100vh - 92px);
+    overflow-y: auto;
   }
 
   .hero-inner {
-    gap: 46px;
-    padding: 58px 0 62px;
+    gap: 38px;
+    padding: 46px 0 58px;
   }
 
   h1 {
-    font-size: 3.28rem;
+    font-size: 2.92rem;
+    line-height: 0.96;
   }
 
   h2 {
-    font-size: 2.15rem;
+    font-size: 2rem;
+    line-height: 1.06;
+  }
+
+  h3 {
+    font-size: 1.14rem;
   }
 
   .hero-copy p {
     font-size: 1rem;
+    margin-bottom: 24px;
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+    gap: 8px;
+  }
+
+  .eyebrow::before {
+    width: 18px;
+  }
+
+  .hero-rotator {
+    min-height: 36px;
+    margin: -6px 0 24px;
+    font-size: 0.86rem;
   }
 
   .hero-actions,
@@ -1473,11 +1510,19 @@ h3 {
     width: 100%;
   }
 
+  .btn {
+    min-height: 52px;
+    padding: 0 18px;
+  }
+
   .hero-proof {
-    margin-top: 24px;
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: 22px;
   }
 
   .hero-proof span {
+    justify-content: center;
     min-height: 34px;
     font-size: 0.8rem;
   }
@@ -1488,19 +1533,44 @@ h3 {
   }
 
   .browser-content {
-    padding: 18px;
+    padding: 16px;
+  }
+
+  .browser-top {
+    padding: 12px;
+  }
+
+  .mock-toolbar {
+    gap: 10px;
+    margin-bottom: 24px;
   }
 
   .mock-hero {
     grid-template-columns: 1fr;
+    gap: 16px;
+    padding-bottom: 22px;
+  }
+
+  .mock-hero strong {
+    height: 58px;
+  }
+
+  .mock-hero p {
+    height: 30px;
   }
 
   .mock-card {
-    min-height: 132px;
+    min-height: 104px;
   }
 
   .mock-grid {
     grid-template-columns: 1fr;
+    gap: 10px;
+    padding-top: 16px;
+  }
+
+  .mock-grid span {
+    height: 58px;
   }
 
   .card-grid,
@@ -1516,15 +1586,41 @@ h3 {
   .work,
   .testimonials,
   .contact {
-    padding: 74px 0;
+    padding: 64px 0;
   }
 
   .about {
-    padding: 76px 0;
+    gap: 28px;
+    padding: 66px 0;
+  }
+
+  .section-heading {
+    margin-bottom: 30px;
+  }
+
+  .section-heading h2::after {
+    margin-top: 16px;
+  }
+
+  .card-grid,
+  .capability-grid,
+  .stats-row,
+  .process-grid {
+    gap: 12px;
   }
 
   .service-card {
     min-height: auto;
+    padding: 24px;
+  }
+
+  .card-number {
+    margin-bottom: 28px;
+  }
+
+  .capability-grid span {
+    min-height: 58px;
+    padding: 16px;
   }
 
   .featured-project .project-visual,
@@ -1539,11 +1635,15 @@ h3 {
   }
 
   .portfolio-preview {
-    min-height: 300px;
+    min-height: 270px;
+  }
+
+  .portfolio-preview::before {
+    inset: 18px;
   }
 
   .portfolio-note {
-    padding: 26px 20px;
+    padding: 26px 20px 28px;
   }
 
   .portfolio-note .btn {
@@ -1551,11 +1651,63 @@ h3 {
   }
 
   .contact-panel {
+    gap: 26px;
     padding: 30px 20px;
+  }
+
+  .contact-links {
+    gap: 10px;
+  }
+
+  .contact-links a {
+    padding: 15px;
+    font-size: 0.92rem;
   }
 
   .testimonial-card p {
     min-height: auto;
+  }
+
+  .footer-inner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .navbar,
+  .section-shell,
+  .footer-inner {
+    width: min(100% - 24px, 1180px);
+  }
+
+  h1 {
+    font-size: 2.58rem;
+  }
+
+  h2 {
+    font-size: 1.78rem;
+  }
+
+  .brand,
+  .footer-brand {
+    width: 124px;
+    height: 40px;
+  }
+
+  .nav-toggle {
+    width: 42px;
+    height: 42px;
+  }
+
+  .nav-menu {
+    right: 12px;
+    left: 12px;
+  }
+
+  .portfolio-note > span {
+    max-width: 100%;
   }
 }
 
