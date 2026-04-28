@@ -90,8 +90,16 @@ a {
 .footer-brand {
   display: block;
   overflow: hidden;
-  width: 166px;
-  height: 52px;
+}
+
+.brand {
+  width: 210px;
+  height: 66px;
+}
+
+.footer-brand {
+  width: 146px;
+  height: 46px;
 }
 
 .brand img,
@@ -1919,8 +1927,16 @@ td span {
 
   .brand,
   .footer-brand {
-    width: 136px;
     height: 44px;
+  }
+
+  .brand {
+    width: 158px;
+    height: 50px;
+  }
+
+  .footer-brand {
+    width: 136px;
   }
 
   .navbar {
@@ -2214,8 +2230,16 @@ td span {
 
   .brand,
   .footer-brand {
-    width: 124px;
     height: 40px;
+  }
+
+  .brand {
+    width: 146px;
+    height: 46px;
+  }
+
+  .footer-brand {
+    width: 124px;
   }
 
   .nav-toggle {
