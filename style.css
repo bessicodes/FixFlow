@@ -196,6 +196,160 @@ main > section[id] {
   pointer-events: none;
 }
 
+.ethereal-hero {
+  isolation: isolate;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    radial-gradient(circle at var(--beam-x, 58%) var(--beam-y, 34%), rgba(255, 255, 255, 0.18), transparent 24rem),
+    radial-gradient(circle at 18% 18%, rgba(255, 255, 255, 0.12), transparent 18rem),
+    linear-gradient(180deg, #050608 0%, #10141d 54%, #050608 100%);
+  color: var(--white);
+}
+
+.ethereal-hero::before {
+  z-index: -2;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.055) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045) 1px, transparent 1px);
+  background-size: 88px 88px;
+  opacity: 0.72;
+}
+
+.ethereal-hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(90deg, rgba(5, 6, 8, 0.7), transparent 38%, rgba(5, 6, 8, 0.66)),
+    linear-gradient(180deg, rgba(5, 6, 8, 0.18), rgba(5, 6, 8, 0.88));
+  content: "";
+  pointer-events: none;
+}
+
+.ethereal-bg {
+  position: absolute;
+  inset: -18% -10%;
+  z-index: -1;
+  overflow: hidden;
+  filter: blur(0.4px);
+  pointer-events: none;
+}
+
+.beam {
+  position: absolute;
+  top: -22%;
+  width: 12vw;
+  min-width: 120px;
+  height: 150%;
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(255, 255, 255, 0.2) 24%, rgba(255, 255, 255, 0.04) 54%, transparent 100%);
+  box-shadow:
+    0 0 42px rgba(255, 255, 255, 0.08),
+    inset 0 0 40px rgba(255, 255, 255, 0.05);
+  opacity: 0.6;
+  transform: rotate(38deg) translate3d(0, 0, 0);
+  animation: beamDrift 11s ease-in-out infinite alternate;
+}
+
+.beam-one {
+  left: 16%;
+  animation-duration: 12s;
+}
+
+.beam-two {
+  left: 34%;
+  width: 9vw;
+  opacity: 0.38;
+  animation-delay: -3s;
+  animation-duration: 14s;
+}
+
+.beam-three {
+  left: 52%;
+  width: 14vw;
+  opacity: 0.54;
+  animation-delay: -7s;
+  animation-duration: 16s;
+}
+
+.beam-four {
+  left: 70%;
+  width: 10vw;
+  opacity: 0.42;
+  animation-delay: -5s;
+  animation-duration: 13s;
+}
+
+.beam-five {
+  left: 84%;
+  width: 8vw;
+  opacity: 0.32;
+  animation-delay: -9s;
+  animation-duration: 17s;
+}
+
+.ethereal-hero .clean-hero-inner {
+  z-index: 1;
+}
+
+.ethereal-hero .eyebrow,
+.ethereal-hero h1,
+.ethereal-hero .hero-copy p {
+  color: var(--white);
+}
+
+.ethereal-hero .hero-copy p {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.ethereal-hero .hero-title span:nth-child(2) {
+  background: linear-gradient(90deg, #ffffff, #d9dde4 48%, #8b93a1);
+  background-size: 180% 100%;
+  background-clip: text;
+}
+
+.ethereal-hero .btn-primary {
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 0 18px 52px rgba(255, 255, 255, 0.16);
+}
+
+.ethereal-hero .btn-primary:hover {
+  background: #eef0f3;
+  box-shadow: 0 20px 58px rgba(255, 255, 255, 0.2);
+}
+
+.ethereal-hero .btn-secondary {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.065);
+  color: var(--white);
+  box-shadow: none;
+  backdrop-filter: blur(16px);
+}
+
+.ethereal-hero .btn-secondary:hover {
+  border-color: rgba(255, 255, 255, 0.34);
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+}
+
+.ethereal-hero .clean-hero-note {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.075);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+}
+
+.ethereal-hero .clean-hero-note span,
+.ethereal-hero .clean-hero-note strong {
+  color: var(--white);
+}
+
+.ethereal-hero .clean-hero-note p {
+  color: rgba(255, 255, 255, 0.68);
+}
+
 .hero-inner {
   position: relative;
   display: grid;
@@ -1866,6 +2020,22 @@ td span {
   }
 }
 
+@keyframes beamDrift {
+  0% {
+    transform: rotate(38deg) translate3d(-18px, -24px, 0) scaleY(0.96);
+    opacity: 0.34;
+  }
+
+  50% {
+    opacity: 0.68;
+  }
+
+  100% {
+    transform: rotate(38deg) translate3d(34px, 28px, 0) scaleY(1.04);
+    opacity: 0.5;
+  }
+}
+
 @keyframes chipFloat {
   0%,
   100% {
@@ -2084,6 +2254,15 @@ td span {
     padding: 46px 0 58px;
   }
 
+  .ethereal-bg {
+    inset: -12% -64%;
+  }
+
+  .beam {
+    min-width: 92px;
+    opacity: 0.34;
+  }
+
   h1 {
     font-size: 2.92rem;
     line-height: 0.96;
@@ -2207,12 +2386,15 @@ td span {
   .clean-hero-inner {
     gap: 26px;
     min-height: auto;
-    padding: 48px 0 58px;
+    padding: 64px 0 66px;
   }
 
-  .clean-hero-note,
   .clean-copy-block {
     padding: 22px;
+  }
+
+  .clean-hero-note {
+    padding: 20px;
   }
 
   .clean-service {
@@ -2413,6 +2595,7 @@ td span {
   .mock-hero em,
   .mock-grid span,
   .live-pulse span,
+  .beam,
   .hero-title span,
   .hero-title span:nth-child(2) {
     animation: none !important;

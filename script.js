@@ -5,6 +5,7 @@ const navMenu = document.querySelector(".nav-menu");
 const navLinks = document.querySelectorAll(".nav-menu a");
 const revealItems = document.querySelectorAll(".reveal");
 const rotatingWord = document.querySelector("#rotating-word");
+const etherealHero = document.querySelector(".ethereal-hero");
 const signupForm = document.querySelector("#signup-form");
 const signupStatus = document.querySelector("#signup-status");
 const year = document.querySelector("#year");
@@ -110,6 +111,20 @@ if (rotatingWord && !reducedMotion) {
       rotatingWord.classList.remove("is-changing");
     }, 220);
   }, 2100);
+}
+
+if (etherealHero && !reducedMotion) {
+  etherealHero.addEventListener(
+    "pointermove",
+    (event) => {
+      const rect = etherealHero.getBoundingClientRect();
+      const x = ((event.clientX - rect.left) / rect.width) * 100;
+      const y = ((event.clientY - rect.top) / rect.height) * 100;
+      etherealHero.style.setProperty("--beam-x", `${x.toFixed(1)}%`);
+      etherealHero.style.setProperty("--beam-y", `${y.toFixed(1)}%`);
+    },
+    { passive: true }
+  );
 }
 
 if (signupForm) {
