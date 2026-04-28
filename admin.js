@@ -60,6 +60,10 @@ function filenameText(value) {
     .slice(0, 48) || "request";
 }
 
+function statusClass(value) {
+  return `status-${safeText(value).toLowerCase().replaceAll("_", "-").replace(/[^a-z0-9-]/g, "")}`;
+}
+
 function formatStatus(value) {
   return safeText(value).replaceAll("_", " ");
 }
@@ -134,7 +138,6 @@ function applyLeadFilters() {
       lead.email,
       lead.whatsapp,
       lead.website_type,
-      lead.current_website,
       lead.message,
       lead.status,
     ]
@@ -208,7 +211,6 @@ function renderLeadDetail(leadId) {
     <div><dt>Email</dt><dd><a href="mailto:${escapeHtml(lead.email)}">${escapeHtml(lead.email)}</a></dd></div>
     <div><dt>WhatsApp</dt><dd>${escapeHtml(lead.whatsapp)}</dd></div>
     <div><dt>Website type</dt><dd>${escapeHtml(lead.website_type)}</dd></div>
-    <div><dt>Current website</dt><dd>${escapeHtml(lead.current_website)}</dd></div>
     <div><dt>Message</dt><dd>${escapeHtml(lead.message)}</dd></div>
   `;
 }
@@ -310,7 +312,7 @@ async function loadVisits() {
 
 function exportLeadsCsv() {
   const rows = [
-    ["Date", "Name", "Business", "Email", "WhatsApp", "Website Type", "Current Website", "Status", "Message"],
+    ["Date", "Name", "Business", "Email", "WhatsApp", "Website Type", "Status", "Message"],
     ...filteredLeads.map((lead) => [
       formatDate(lead.created_at),
       safeText(lead.full_name),
@@ -318,7 +320,6 @@ function exportLeadsCsv() {
       safeText(lead.email),
       safeText(lead.whatsapp),
       safeText(lead.website_type),
-      safeText(lead.current_website),
       formatStatus(lead.status),
       safeText(lead.message),
     ]),
@@ -334,6 +335,11 @@ function exportLeadsCsv() {
 
 function exportLeadsExcel() {
   const generatedAt = formatDate(new Date());
+  const statusCounts = STATUSES.reduce((acc, status) => {
+    acc[status] = leadsData.filter((lead) => lead.status === status).length;
+    return acc;
+  }, {});
+
   const rows = filteredLeads.map(
     (lead) => `
       <tr>
@@ -343,8 +349,7 @@ function exportLeadsExcel() {
         <td>${escapeHtml(lead.email)}</td>
         <td>${escapeHtml(lead.whatsapp)}</td>
         <td>${escapeHtml(lead.website_type)}</td>
-        <td>${escapeHtml(lead.current_website)}</td>
-        <td>${escapeHtml(formatStatus(lead.status))}</td>
+        <td class="${statusClass(lead.status)}">${escapeHtml(formatStatus(lead.status))}</td>
         <td>${escapeHtml(lead.message)}</td>
       </tr>
     `
@@ -356,30 +361,38 @@ function exportLeadsExcel() {
         <meta charset="UTF-8">
         <style>
           body { font-family: Arial, sans-serif; color: #111827; }
-          h1 { margin: 0 0 6px; font-size: 22px; }
-          p { margin: 0 0 18px; color: #4b5563; }
+          h1 { margin: 0; font-size: 24px; color: #ffffff; }
+          p { margin: 6px 0 0; color: #d9dde4; }
           table { border-collapse: collapse; width: 100%; }
           th { background: #050608; color: #ffffff; font-weight: 700; text-align: left; }
-          th, td { border: 1px solid #d9dde4; padding: 10px 12px; vertical-align: top; }
-          tr:nth-child(even) td { background: #f3f4f6; }
-          td { mso-number-format: "\\@"; }
-          .summary td { background: #eef0f3; font-weight: 700; }
+          th, td { border: 1px solid #d9dde4; padding: 11px 13px; vertical-align: top; mso-number-format: "\\@"; }
+          tr:nth-child(even) td { background: #f7f8fa; }
+          .report-head td { background: #050608; padding: 20px; border-color: #050608; }
+          .summary td { background: #eef0f3; font-weight: 700; color: #111827; }
+          .status-new { background: #fff7d6; font-weight: 700; color: #7a4d00; }
+          .status-contacted { background: #e8f1ff; font-weight: 700; color: #164a8b; }
+          .status-in-progress { background: #ede9fe; font-weight: 700; color: #4c1d95; }
+          .status-completed { background: #dcfce7; font-weight: 700; color: #166534; }
+          .status-closed { background: #f3f4f6; font-weight: 700; color: #374151; }
         </style>
       </head>
       <body>
-        <h1>FixFlow Leads Report</h1>
-        <p>Generated ${escapeHtml(generatedAt)}. Showing ${filteredLeads.length} of ${leadsData.length} requests.</p>
         <table>
+          <tr class="report-head">
+            <td colspan="8">
+              <h1>FixFlow Leads Report</h1>
+              <p>Generated ${escapeHtml(generatedAt)}. Showing ${filteredLeads.length} of ${leadsData.length} requests.</p>
+            </td>
+          </tr>
           <tr class="summary">
             <td>Total requests</td>
             <td>${leadsData.length}</td>
             <td>Filtered requests</td>
             <td>${filteredLeads.length}</td>
             <td>New leads</td>
-            <td>${leadsData.filter((lead) => lead.status === "new").length}</td>
+            <td>${statusCounts.new || 0}</td>
             <td>In progress</td>
-            <td>${leadsData.filter((lead) => lead.status === "in_progress").length}</td>
-            <td></td>
+            <td>${statusCounts.in_progress || 0}</td>
           </tr>
           <tr>
             <th>Date</th>
@@ -388,11 +401,10 @@ function exportLeadsExcel() {
             <th>Email</th>
             <th>WhatsApp</th>
             <th>Website Type</th>
-            <th>Current Website</th>
             <th>Status</th>
             <th>Message</th>
           </tr>
-          ${rows.join("") || '<tr><td colspan="9">No requests to export.</td></tr>'}
+          ${rows.join("") || '<tr><td colspan="8">No requests to export.</td></tr>'}
         </table>
       </body>
     </html>
@@ -415,29 +427,37 @@ function exportSingleLeadExcel(leadId) {
         <meta charset="UTF-8">
         <style>
           body { font-family: Arial, sans-serif; color: #111827; }
-          h1 { margin: 0 0 6px; font-size: 22px; }
-          p { margin: 0 0 18px; color: #4b5563; }
+          h1 { margin: 0; font-size: 24px; color: #ffffff; }
+          p { margin: 6px 0 0; color: #d9dde4; }
           table { border-collapse: collapse; width: 100%; max-width: 900px; }
           th { width: 190px; background: #050608; color: #ffffff; font-weight: 700; text-align: left; }
-          th, td { border: 1px solid #d9dde4; padding: 12px 14px; vertical-align: top; }
+          th, td { border: 1px solid #d9dde4; padding: 12px 14px; vertical-align: top; mso-number-format: "\\@"; }
           tr:nth-child(even) td, tr:nth-child(even) th { background: #f3f4f6; }
           tr:nth-child(even) th { color: #050608; }
-          td { mso-number-format: "\\@"; }
+          .report-head td { background: #050608; padding: 20px; border-color: #050608; }
+          .status-new { background: #fff7d6; font-weight: 700; color: #7a4d00; }
+          .status-contacted { background: #e8f1ff; font-weight: 700; color: #164a8b; }
+          .status-in-progress { background: #ede9fe; font-weight: 700; color: #4c1d95; }
+          .status-completed { background: #dcfce7; font-weight: 700; color: #166534; }
+          .status-closed { background: #f3f4f6; font-weight: 700; color: #374151; }
           .message { min-height: 90px; }
         </style>
       </head>
       <body>
-        <h1>${escapeHtml(title)}</h1>
-        <p>Generated ${escapeHtml(generatedAt)} from the FixFlow admin panel.</p>
         <table>
+          <tr class="report-head">
+            <td colspan="2">
+              <h1>${escapeHtml(title)}</h1>
+              <p>Generated ${escapeHtml(generatedAt)} from the FixFlow admin panel.</p>
+            </td>
+          </tr>
           <tr><th>Date</th><td>${escapeHtml(formatDate(lead.created_at))}</td></tr>
           <tr><th>Name</th><td>${escapeHtml(lead.full_name)}</td></tr>
           <tr><th>Business</th><td>${escapeHtml(lead.business_name)}</td></tr>
           <tr><th>Email</th><td>${escapeHtml(lead.email)}</td></tr>
           <tr><th>WhatsApp</th><td>${escapeHtml(lead.whatsapp)}</td></tr>
           <tr><th>Website Type</th><td>${escapeHtml(lead.website_type)}</td></tr>
-          <tr><th>Current Website</th><td>${escapeHtml(lead.current_website)}</td></tr>
-          <tr><th>Status</th><td>${escapeHtml(formatStatus(lead.status))}</td></tr>
+          <tr><th>Status</th><td class="${statusClass(lead.status)}">${escapeHtml(formatStatus(lead.status))}</td></tr>
           <tr><th>Message</th><td class="message">${escapeHtml(lead.message)}</td></tr>
         </table>
       </body>
