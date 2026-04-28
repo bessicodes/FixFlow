@@ -5,6 +5,8 @@ const navMenu = document.querySelector(".nav-menu");
 const navLinks = document.querySelectorAll(".nav-menu a");
 const revealItems = document.querySelectorAll(".reveal");
 const rotatingWord = document.querySelector("#rotating-word");
+const signupForm = document.querySelector("#signup-form");
+const signupStatus = document.querySelector("#signup-status");
 const year = document.querySelector("#year");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -33,6 +35,12 @@ function updateScrollProgress() {
   const pageHeight = document.documentElement.scrollHeight - window.innerHeight;
   const progress = pageHeight > 0 ? window.scrollY / pageHeight : 0;
   scrollProgress.style.transform = `scaleX(${Math.min(progress, 1)})`;
+}
+
+function setSignupStatus(message, type = "") {
+  if (!signupStatus) return;
+  signupStatus.textContent = message;
+  signupStatus.dataset.type = type;
 }
 
 if (navToggle && navMenu) {
@@ -104,6 +112,53 @@ if (rotatingWord && !reducedMotion) {
   }, 2100);
 }
 
+if (signupForm) {
+  signupForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!fixflowSupabase) {
+      setSignupStatus("Signup is not connected yet. Please try again later.", "error");
+      return;
+    }
+
+    const formData = new FormData(signupForm);
+    const lead = {
+      full_name: String(formData.get("full_name") || "").trim(),
+      business_name: String(formData.get("business_name") || "").trim(),
+      email: String(formData.get("email") || "").trim(),
+      whatsapp: String(formData.get("whatsapp") || "").trim(),
+      website_type: String(formData.get("website_type") || "").trim(),
+      current_website: String(formData.get("current_website") || "").trim(),
+      message: String(formData.get("message") || "").trim(),
+    };
+
+    setSignupStatus("Sending request...");
+
+    const { error } = await fixflowSupabase.from("leads").insert(lead);
+
+    if (error) {
+      setSignupStatus("Something went wrong. Please email hello@fixflow.co.za for now.", "error");
+      return;
+    }
+
+    signupForm.reset();
+    setSignupStatus("Thanks. Your website request has been saved.", "success");
+  });
+}
+
+async function trackVisit() {
+  if (!fixflowSupabase || window.location.pathname.endsWith("admin.html")) return;
+
+  await fixflowSupabase.from("page_visits").insert({
+    path: window.location.pathname || "/",
+    referrer: document.referrer || "",
+    user_agent: navigator.userAgent || "",
+    screen_width: window.screen.width || null,
+    screen_height: window.screen.height || null,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || "",
+  });
+}
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && navMenu && navMenu.classList.contains("is-open")) {
     closeMenu();
@@ -121,3 +176,4 @@ window.addEventListener(
 
 updateHeaderState();
 updateScrollProgress();
+trackVisit();

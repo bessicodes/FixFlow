@@ -26,6 +26,7 @@
         <a href="#services">Services</a>
         <a href="#work">Work</a>
         <a href="#about">About</a>
+        <a href="#signup">Signup</a>
         <a href="#contact">Contact</a>
       </div>
     </nav>
@@ -229,6 +230,64 @@
       </div>
     </section>
 
+    <section class="signup section-shell" id="signup">
+      <div class="section-heading reveal">
+        <span class="eyebrow">Start Here</span>
+        <h2>Tell FixFlow what kind of website you need.</h2>
+        <p>Share a few details and FixFlow will use them to understand your business, website goals, and the best next step.</p>
+      </div>
+
+      <div class="signup-panel reveal">
+        <form class="signup-form" id="signup-form">
+          <div class="form-grid">
+            <label>
+              Full name
+              <input type="text" name="full_name" autocomplete="name" required>
+            </label>
+            <label>
+              Business name
+              <input type="text" name="business_name" autocomplete="organization" required>
+            </label>
+            <label>
+              Email address
+              <input type="email" name="email" autocomplete="email" required>
+            </label>
+            <label>
+              WhatsApp number
+              <input type="tel" name="whatsapp" autocomplete="tel" placeholder="Add WhatsApp number">
+            </label>
+            <label>
+              Website type
+              <select name="website_type" required>
+                <option value="">Choose one</option>
+                <option value="Starter Website">Starter Website</option>
+                <option value="Website Redesign">Website Redesign</option>
+                <option value="Business Landing Page">Business Landing Page</option>
+                <option value="Not sure yet">Not sure yet</option>
+              </select>
+            </label>
+            <label>
+              Current website
+              <input type="url" name="current_website" placeholder="https://example.com">
+            </label>
+          </div>
+          <label>
+            Project details
+            <textarea name="message" rows="5" placeholder="Tell us what your business does and what you want the website to help with."></textarea>
+          </label>
+          <button class="btn btn-primary" type="submit">Submit Website Request</button>
+          <p class="form-status" id="signup-status" role="status"></p>
+        </form>
+
+        <div class="signup-side">
+          <span>What happens next</span>
+          <h3>FixFlow reviews your details and follows up with a simple next step.</h3>
+          <p>No fake client dashboard, no complicated process. Just a clear request form connected to a private database.</p>
+          <a href="admin.html">Admin Login</a>
+        </div>
+      </div>
+    </section>
+
     <section class="contact section-shell" id="contact">
       <div class="contact-panel reveal">
         <div>
@@ -255,6 +314,8 @@
     </div>
   </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

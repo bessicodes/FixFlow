@@ -630,6 +630,7 @@ h3 {
 .what-we-do,
 .work,
 .testimonials,
+.signup,
 .contact {
   padding: 108px 0;
 }
@@ -1096,6 +1097,129 @@ h3 {
   color: rgba(255, 255, 255, 0.62);
 }
 
+.signup-panel {
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  gap: 18px;
+  align-items: stretch;
+}
+
+.signup-form,
+.signup-side,
+.admin-card,
+.admin-table-card,
+.admin-stats article {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  box-shadow: var(--shadow-soft);
+}
+
+.signup-form {
+  display: grid;
+  gap: 18px;
+  padding: 28px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.signup-form label,
+.admin-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--black);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.signup-form input,
+.signup-form select,
+.signup-form textarea,
+.admin-form input {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--soft);
+  color: var(--ink);
+  font: inherit;
+  min-height: 48px;
+  padding: 0 14px;
+  outline: none;
+  transition: border-color 180ms ease, background 180ms ease, box-shadow 180ms ease;
+}
+
+.signup-form textarea {
+  min-height: 128px;
+  padding: 14px;
+  resize: vertical;
+}
+
+.signup-form input:focus,
+.signup-form select:focus,
+.signup-form textarea:focus,
+.admin-form input:focus {
+  border-color: rgba(5, 6, 8, 0.42);
+  background: var(--white);
+  box-shadow: 0 0 0 4px rgba(5, 6, 8, 0.06);
+}
+
+.form-status {
+  min-height: 24px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.form-status[data-type="success"] {
+  color: #17683a;
+}
+
+.form-status[data-type="error"] {
+  color: #9b1c1c;
+}
+
+.signup-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 30px;
+  color: var(--white);
+  background: var(--black);
+}
+
+.signup-side span {
+  width: max-content;
+  margin-bottom: 22px;
+  padding: 7px 11px;
+  border: 1px solid var(--line-dark);
+  border-radius: 999px;
+  color: #d8dce2;
+  font-size: 0.76rem;
+  font-weight: 850;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.signup-side h3 {
+  color: var(--white);
+  font-size: 1.6rem;
+}
+
+.signup-side p {
+  color: rgba(255, 255, 255, 0.68);
+}
+
+.signup-side a {
+  margin-top: 20px;
+  color: var(--white);
+  font-weight: 850;
+}
+
 .testimonials {
   background: var(--soft);
   box-shadow: 0 0 0 100vmax var(--soft);
@@ -1228,6 +1352,142 @@ h3 {
   font-size: 0.92rem;
 }
 
+.admin-page {
+  min-height: 100vh;
+  background: var(--soft);
+}
+
+.admin-shell {
+  width: min(1180px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 46px 0;
+}
+
+.admin-card {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 34px;
+}
+
+.admin-brand {
+  margin-bottom: 28px;
+}
+
+.admin-card h1,
+.admin-dashboard h1 {
+  font-size: 2.7rem;
+  line-height: 1;
+}
+
+.admin-card p,
+.admin-dashboard p {
+  color: var(--muted);
+}
+
+.admin-form {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+.admin-dashboard.is-hidden,
+.admin-card.is-hidden {
+  display: none;
+}
+
+.admin-topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.admin-stats article {
+  padding: 20px;
+}
+
+.admin-stats span,
+.admin-stats strong {
+  display: block;
+}
+
+.admin-stats span {
+  color: var(--muted);
+  font-size: 0.84rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.admin-stats strong {
+  margin-top: 8px;
+  color: var(--black);
+  font-size: 1.7rem;
+  line-height: 1.1;
+}
+
+.admin-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.admin-table-card {
+  overflow: hidden;
+}
+
+.admin-section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.admin-section-title h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 860px;
+}
+
+th,
+td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+th {
+  color: var(--black);
+  font-size: 0.78rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+td a {
+  color: var(--black);
+  font-weight: 800;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(26px);
@@ -1353,6 +1613,7 @@ h3 {
 
   .split-heading,
   .about,
+  .signup-panel,
   .contact-panel {
     grid-template-columns: 1fr;
   }
@@ -1585,6 +1846,7 @@ h3 {
   .what-we-do,
   .work,
   .testimonials,
+  .signup,
   .contact {
     padding: 64px 0;
   }
@@ -1653,6 +1915,33 @@ h3 {
   .contact-panel {
     gap: 26px;
     padding: 30px 20px;
+  }
+
+  .signup-form,
+  .signup-side,
+  .admin-card {
+    padding: 24px 20px;
+  }
+
+  .form-grid,
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-shell {
+    width: min(100% - 24px, 1180px);
+    padding: 26px 0;
+  }
+
+  .admin-topbar,
+  .admin-section-title {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-topbar .btn,
+  .admin-section-title .btn {
+    width: 100%;
   }
 
   .contact-links {
