@@ -25,6 +25,7 @@ const visitInsights = document.querySelector("#visit-insights");
 const detailTitle = document.querySelector("#detail-title");
 const detailSubtitle = document.querySelector("#detail-subtitle");
 const leadDetailList = document.querySelector("#lead-detail-list");
+const detailExportExcelButton = document.querySelector("#detail-export-excel");
 const adminLastUpdated = document.querySelector("#admin-last-updated");
 
 const STATUSES = ["new", "contacted", "in_progress", "completed", "closed"];
@@ -49,6 +50,14 @@ function formatDate(value) {
 
 function formatDateForFile(value) {
   return new Date(value).toISOString().slice(0, 10);
+}
+
+function filenameText(value) {
+  return safeText(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "")
+    .slice(0, 48) || "request";
 }
 
 function formatStatus(value) {
@@ -172,7 +181,12 @@ function renderLeads() {
               ).join("")}
             </select>
           </td>
-          <td><button class="table-action" type="button" data-view-lead="${lead.id}">View</button></td>
+          <td>
+            <div class="table-actions">
+              <button class="table-action" type="button" data-view-lead="${lead.id}">View</button>
+              <button class="table-action table-action-dark" type="button" data-export-lead="${lead.id}">Export Excel</button>
+            </div>
+          </td>
         </tr>
       `
     )
@@ -186,6 +200,7 @@ function renderLeadDetail(leadId) {
   selectedLeadId = leadId;
   detailTitle.textContent = lead.business_name || lead.full_name || "Website request";
   detailSubtitle.textContent = `${safeText(lead.full_name)} - ${formatStatus(lead.status)}`;
+  if (detailExportExcelButton) detailExportExcelButton.disabled = false;
   leadDetailList.innerHTML = `
     <div><dt>Date</dt><dd>${formatDate(lead.created_at)}</dd></div>
     <div><dt>Name</dt><dd>${escapeHtml(lead.full_name)}</dd></div>
@@ -387,6 +402,53 @@ function exportLeadsExcel() {
   downloadBlob(blob, `fixflow-leads-${formatDateForFile(new Date())}.xls`);
 }
 
+function exportSingleLeadExcel(leadId) {
+  const lead = leadsData.find((item) => item.id === leadId);
+  if (!lead) return;
+
+  const generatedAt = formatDate(new Date());
+  const displayName = lead.business_name || lead.full_name || "Website request";
+  const title = `FixFlow Request - ${safeText(displayName)}`;
+  const workbook = `
+    <html>
+      <head>
+        <meta charset="UTF-8">
+        <style>
+          body { font-family: Arial, sans-serif; color: #111827; }
+          h1 { margin: 0 0 6px; font-size: 22px; }
+          p { margin: 0 0 18px; color: #4b5563; }
+          table { border-collapse: collapse; width: 100%; max-width: 900px; }
+          th { width: 190px; background: #050608; color: #ffffff; font-weight: 700; text-align: left; }
+          th, td { border: 1px solid #d9dde4; padding: 12px 14px; vertical-align: top; }
+          tr:nth-child(even) td, tr:nth-child(even) th { background: #f3f4f6; }
+          tr:nth-child(even) th { color: #050608; }
+          td { mso-number-format: "\\@"; }
+          .message { min-height: 90px; }
+        </style>
+      </head>
+      <body>
+        <h1>${escapeHtml(title)}</h1>
+        <p>Generated ${escapeHtml(generatedAt)} from the FixFlow admin panel.</p>
+        <table>
+          <tr><th>Date</th><td>${escapeHtml(formatDate(lead.created_at))}</td></tr>
+          <tr><th>Name</th><td>${escapeHtml(lead.full_name)}</td></tr>
+          <tr><th>Business</th><td>${escapeHtml(lead.business_name)}</td></tr>
+          <tr><th>Email</th><td>${escapeHtml(lead.email)}</td></tr>
+          <tr><th>WhatsApp</th><td>${escapeHtml(lead.whatsapp)}</td></tr>
+          <tr><th>Website Type</th><td>${escapeHtml(lead.website_type)}</td></tr>
+          <tr><th>Current Website</th><td>${escapeHtml(lead.current_website)}</td></tr>
+          <tr><th>Status</th><td>${escapeHtml(formatStatus(lead.status))}</td></tr>
+          <tr><th>Message</th><td class="message">${escapeHtml(lead.message)}</td></tr>
+        </table>
+      </body>
+    </html>
+  `;
+
+  const blob = new Blob([workbook], { type: "application/vnd.ms-excel;charset=utf-8" });
+  const leadName = filenameText(displayName);
+  downloadBlob(blob, `fixflow-request-${leadName}-${formatDateForFile(new Date())}.xls`);
+}
+
 function downloadBlob(blob, filename) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -452,14 +514,21 @@ if (refreshLeadsButton) refreshLeadsButton.addEventListener("click", loadLeads);
 if (refreshVisitsButton) refreshVisitsButton.addEventListener("click", loadVisits);
 if (exportLeadsCsvButton) exportLeadsCsvButton.addEventListener("click", exportLeadsCsv);
 if (exportLeadsExcelButton) exportLeadsExcelButton.addEventListener("click", exportLeadsExcel);
+if (detailExportExcelButton) {
+  detailExportExcelButton.addEventListener("click", () => {
+    if (selectedLeadId) exportSingleLeadExcel(selectedLeadId);
+  });
+}
 if (leadSearch) leadSearch.addEventListener("input", applyLeadFilters);
 if (leadStatusFilter) leadStatusFilter.addEventListener("change", applyLeadFilters);
 if (leadTypeFilter) leadTypeFilter.addEventListener("change", applyLeadFilters);
 
 if (leadsTable) {
   leadsTable.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-view-lead]");
-    if (button) renderLeadDetail(button.dataset.viewLead);
+    const viewButton = event.target.closest("[data-view-lead]");
+    const exportButton = event.target.closest("[data-export-lead]");
+    if (viewButton) renderLeadDetail(viewButton.dataset.viewLead);
+    if (exportButton) exportSingleLeadExcel(exportButton.dataset.exportLead);
   });
 
   leadsTable.addEventListener("change", (event) => {

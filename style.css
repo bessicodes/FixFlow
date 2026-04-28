@@ -1664,6 +1664,12 @@ td span {
   font-size: 0.84rem;
 }
 
+.table-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
 .table-action {
   min-height: 34px;
   border: 1px solid var(--line);
@@ -1676,10 +1682,20 @@ td span {
   transition: background 180ms ease, color 180ms ease, transform 180ms ease;
 }
 
+.table-action-dark {
+  border-color: var(--black);
+  background: var(--black);
+  color: var(--white);
+}
+
 .table-action:hover {
   background: var(--black);
   color: var(--white);
   transform: translateY(-1px);
+}
+
+.table-action-dark:hover {
+  background: #2f343d;
 }
 
 .lead-detail-panel {
@@ -1712,6 +1728,28 @@ td span {
 
 .lead-detail-panel p {
   color: rgba(255, 255, 255, 0.66);
+}
+
+.detail-export-button {
+  width: 100%;
+  min-height: 44px;
+  margin-top: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius);
+  background: var(--white);
+  color: var(--black);
+  cursor: pointer;
+  font-weight: 850;
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.detail-export-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.detail-export-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .lead-detail-panel dl {
