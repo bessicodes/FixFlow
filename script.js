@@ -4,7 +4,6 @@ const navToggle = document.querySelector(".nav-toggle");
 const navMenu = document.querySelector(".nav-menu");
 const navLinks = document.querySelectorAll(".nav-menu a");
 const revealItems = document.querySelectorAll(".reveal");
-const animatedTitleWord = document.querySelector("#animated-title-word");
 const rotatingWord = document.querySelector("#rotating-word");
 const year = document.querySelector("#year");
 const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -103,23 +102,6 @@ if (rotatingWord && !reducedMotion) {
       rotatingWord.classList.remove("is-changing");
     }, 220);
   }, 2100);
-}
-
-if (animatedTitleWord && !reducedMotion) {
-  const titleWords = ["work", "convert", "load fast", "look clean", "build trust"];
-  let titleIndex = 0;
-
-  window.setInterval(() => {
-    animatedTitleWord.classList.remove("is-entering");
-    animatedTitleWord.classList.add("is-changing");
-
-    window.setTimeout(() => {
-      titleIndex = (titleIndex + 1) % titleWords.length;
-      animatedTitleWord.textContent = titleWords[titleIndex];
-      animatedTitleWord.classList.remove("is-changing");
-      animatedTitleWord.classList.add("is-entering");
-    }, 280);
-  }, 2300);
 }
 
 document.addEventListener("keydown", (event) => {
