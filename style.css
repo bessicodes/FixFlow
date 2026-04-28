@@ -1104,6 +1104,10 @@ h3 {
   align-items: stretch;
 }
 
+.contact-request-panel {
+  margin-bottom: 18px;
+}
+
 .signup-form,
 .signup-side,
 .admin-card,
