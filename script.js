@@ -128,7 +128,6 @@ if (signupForm) {
       email: String(formData.get("email") || "").trim(),
       whatsapp: String(formData.get("whatsapp") || "").trim(),
       website_type: String(formData.get("website_type") || "").trim(),
-      current_website: String(formData.get("current_website") || "").trim(),
       message: String(formData.get("message") || "").trim(),
     };
 
